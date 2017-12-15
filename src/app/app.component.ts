@@ -1,6 +1,16 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+
+
+interface Person {
+  name: string, 
+  superPower: boolean, 
+  rich: boolean, 
+  genius:boolean,
+}
+
 
 @Component({
   selector: 'app-root',
@@ -10,15 +20,31 @@ import { Component } from '@angular/core';
 
 export class AppComponent {
   personForm: any;
-  people: Array<Object> = [];
+  Person = function(name: string, superPower: boolean, rich: boolean, genius:boolean){
+      return {
+        name: name,
+        superPower: superPower,
+        rich: rich,
+        genius: genius,
+      }
+  }
+  people: Array<Person> = [];
   talents: Array<[string, string]> = [
     ['superPower', 'Super Power'], 
     ['rich', 'Rich'], 
     ['genius', 'Genius']
   ];
+  talentCount: {
+    superPower: number, 
+    rich: number, 
+    genius: number} = 
+  {
+    'superPower':0,
+    'rich': 0,
+    'genius':0,
+  };
   filterPeople: Array<Object> = [];
   filterValue: boolean = null;
-
 
 
   constructor(private fb: FormBuilder){
@@ -34,7 +60,7 @@ export class AppComponent {
     let value = this.personForm.value;
     
     if (this.personForm.valid) {
-      let person = {
+      let person: Person = {
         name: value.addPerson,
         superPower: value.superPower,
         rich: value.rich,
@@ -43,22 +69,40 @@ export class AppComponent {
 
       this.people.push(person);
       this.filterArray(this.filterValue);
-
       this.personForm.reset();
-
-      console.log(JSON.stringify(this.people));
+      this.getTalent();
     }
   }
 
   removePerson(person){
     let index = this.people.indexOf(person);
     this.people.splice(index, 1);
+    this.filterArray(this.filterValue);
+    this.getTalent();
   }
 
   onChange(event,person,selector) {
     let index = this.people.indexOf(person);
-    this.people[index][selector] = event.returnValue;
-    console.log(this.people[index][selector], this.people, event);
+    let value = event.target.checked;
+    person[selector] = value;
+    this.getTalent();
+  }
+
+  getTalent() {
+    let count = this.talentCount = {
+      'superPower':0,
+      'rich': 0,
+      'genius':0,
+    };
+
+    this.people.forEach(function(person){
+      for(let details in person){
+        if(person[details] && details != 'name'){
+          count[details]++
+        }
+      }
+    })
+
   }
 
   filterArray(value = null) {

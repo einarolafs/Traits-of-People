@@ -19,3 +19,11 @@
 .main-container .filters > span > span {
     margin:0 5px;
 }
+
+.main-container table * {
+    text-align: center;
+}
+
+.main-container table tr th:first-child, .main-container tabel tr td:first-child {
+    width:180px;
+}

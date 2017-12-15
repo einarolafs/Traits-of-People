@@ -6,7 +6,7 @@
       <form [formGroup]="personForm" (submit)="savePerson()">
         <div class="form-group add-person row">
           <div class="add-name col-xs-5">
-            <label for="addPerson">Add a new persone</label>
+            <label for="addPerson">Add a new person</label>
             <input type="text" class="form-control" name="addPerson" formControlName="addPerson" />
           </div>
           <div class="add-traits col-xs-7">
@@ -34,9 +34,9 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Super Power</th>
-              <th>Rich</th>
-              <th>Genius</th>
+              <th *ngFor="let talent of talents">
+                {{talent[1]}}
+              </th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -66,7 +66,7 @@
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let talent of talents">
           {{talent[1]}}
-          <span class="badge badge-primary badge-pill">1</span>
+          <span class="badge badge-primary badge-pill">{{talentCount[talent[0]]}}</span>
         </li>
       </ul>
     </div>
