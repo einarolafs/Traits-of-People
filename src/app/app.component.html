@@ -1,6 +1,8 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-xs-8 main-container">
+
+
       <form [formGroup]="personForm" (submit)="savePerson()">
         <div class="form-group add-person row">
           <div class="add-name col-xs-5">
@@ -24,7 +26,10 @@
           </div>
         </div>
       </form>
+
+
       <div class="persons-container">
+
         <table class="table">
           <thead>
             <tr>
@@ -36,19 +41,35 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let person of people">
+            <tr *ngFor="let person of filterPeople">
               <td>{{person.name}}</td>
-              <td><input type="checkbox" (change)="onChange($event,person,'superPower')" [checked]="person.superPower" /></td>
-              <td><input type="checkbox" (change)="onChange($event,person,'rich')" [checked]="person.rich" /></td>
-              <td><input type="checkbox" (change)="onChange($event,person,'genius')" [checked]="person.genius" /></td>
+
+              <td *ngFor="let talent of talents"><input type="checkbox" (change)="onChange($event,person,talent[0])" [checked]="person[talent[0]]" /></td>
+
               <td><input type="button" (click)="removePerson(person)" class="btn btn-secondary" value="x" /></td>
             </tr>
           </tbody>
         </table>
+
+        <div class="filters">
+          <span *ngFor="let talent of talents">
+            <a href="#{{talent[0]}}" (click)="filterArray(talent[0])">{{talent[1]}}</a><span>|</span>
+          </span>
+          <a href="#" (click)="filterArray()">All</a>
+        </div>
       </div>
     </div>
+
     <div class="col-xs-4 side-container">
       <h4>Sidebar</h4>
+      <h4>Toal Persons: {{people.length}}</h4>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let talent of talents">
+          {{talent[1]}}
+          <span class="badge badge-primary badge-pill">1</span>
+        </li>
+      </ul>
     </div>
+
   </div>
 </div>

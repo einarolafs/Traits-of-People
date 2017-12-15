@@ -1,3 +1,4 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Component } from '@angular/core';
 
@@ -9,7 +10,16 @@ import { Component } from '@angular/core';
 
 export class AppComponent {
   personForm: any;
-  people = [];
+  people: Array<Object> = [];
+  talents: Array<[string, string]> = [
+    ['superPower', 'Super Power'], 
+    ['rich', 'Rich'], 
+    ['genius', 'Genius']
+  ];
+  filterPeople: Array<Object> = [];
+  filterValue: boolean = null;
+
+
 
   constructor(private fb: FormBuilder){
     this.personForm = this.fb.group({
@@ -32,9 +42,11 @@ export class AppComponent {
       }
 
       this.people.push(person);
-      console.log(this.personForm.value.addPerson)
+      this.filterArray(this.filterValue);
+
       this.personForm.reset();
 
+      console.log(JSON.stringify(this.people));
     }
   }
 
@@ -44,6 +56,17 @@ export class AppComponent {
   }
 
   onChange(event,person,selector) {
-    person[selector] = event.returnValue;
+    let index = this.people.indexOf(person);
+    this.people[index][selector] = event.returnValue;
+    console.log(this.people[index][selector], this.people, event);
+  }
+
+  filterArray(value = null) {
+    if(!value){
+      this.filterPeople = [...this.people];
+    } else {
+      this.filterPeople = this.people.filter(person => person[value] === true);
+      this.filterValue = value;
+    }
   }
 }

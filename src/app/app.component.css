@@ -15,3 +15,7 @@
     align-items: center;
     padding-top: 25px;
 }
+
+.main-container .filters > span > span {
+    margin:0 5px;
+}
