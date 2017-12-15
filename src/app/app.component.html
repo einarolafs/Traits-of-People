@@ -1,20 +1,54 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-8 main-container">
+      <form [formGroup]="personForm" (submit)="savePerson()">
+        <div class="form-group add-person row">
+          <div class="add-name col-xs-5">
+            <label for="addPerson">Add a new persone</label>
+            <input type="text" class="form-control" name="addPerson" formControlName="addPerson" />
+          </div>
+          <div class="add-traits col-xs-7">
+            <label class="form-check-label">
+              <input type="checkbox" formControlName="superPower" class="form-check-input">
+                Super Power
+            </label>
+            <label class="form-check-label">
+              <input type="checkbox" formControlName="rich" class="form-check-input">
+                Rich
+            </label>
+            <label class="form-check-label">
+              <input type="checkbox" formControlName="genius" class="form-check-input">
+                Genius
+            </label>
+            <button type="submit" class="btn btn-primary" [disabled]="!personForm.valid">Submit</button>
+          </div>
+        </div>
+      </form>
+      <div class="persons-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Super Power</th>
+              <th>Rich</th>
+              <th>Genius</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let person of people">
+              <td>{{person.name}}</td>
+              <td><input type="checkbox" (change)="onChange($event,person,'superPower')" [checked]="person.superPower" /></td>
+              <td><input type="checkbox" (change)="onChange($event,person,'rich')" [checked]="person.rich" /></td>
+              <td><input type="checkbox" (change)="onChange($event,person,'genius')" [checked]="person.genius" /></td>
+              <td><input type="button" (click)="removePerson(person)" class="btn btn-secondary" value="x" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-xs-4 side-container">
+      <h4>Sidebar</h4>
+    </div>
+  </div>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
-

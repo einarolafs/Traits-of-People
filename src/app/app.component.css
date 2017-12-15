@@ -1,0 +1,17 @@
+.container-fluid .row {
+    display: flex;
+    align-items:stretch;
+}
+
+.main-container .add-person {
+    display: flex;
+    align-items:stretch;
+
+}
+
+.main-container .add-traits {
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    padding-top: 25px;
+}
