@@ -1,33 +1,22 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-
-
-
+import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common'
 interface Person {
   name: string, 
   superPower: boolean, 
   rich: boolean, 
   genius:boolean,
 }
-
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}]
 })
 
 export class AppComponent {
   personForm: any;
-  Person = function(name: string, superPower: boolean, rich: boolean, genius:boolean){
-      return {
-        name: name,
-        superPower: superPower,
-        rich: rich,
-        genius: genius,
-      }
-  }
   people: Array<Person> = [];
   talents: Array<[string, string]> = [
     ['superPower', 'Super Power'], 
@@ -44,16 +33,17 @@ export class AppComponent {
     'genius':0,
   };
   filterPeople: Array<Object> = [];
-  filterValue: boolean = null;
+  filterValue: string = null;
 
-
-  constructor(private fb: FormBuilder){
+  constructor(private fb: FormBuilder, private location: Location, provide: LocationStrategy,){
     this.personForm = this.fb.group({
       'addPerson': ['', Validators.required],
       'superPower': [false],
       'rich':[false],
       'genius':[false]
     })
+
+    this.filterValue = window.location.hash.substring(1);
   }
 
   savePerson() {

@@ -27,3 +27,9 @@
 .main-container table tr th:first-child, .main-container tabel tr td:first-child {
     width:180px;
 }
+
+.main-container .filters a.active {
+    pointer-events: none;
+    color:gray;
+    text-decoration: none;
+}
