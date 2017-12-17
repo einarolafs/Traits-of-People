@@ -1,27 +1,45 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-xs-8 main-container">
+    <div class="col-xs-9 main-container">
 
 
       <form [formGroup]="personForm" (submit)="savePerson()">
         <div class="form-group add-person row">
           <div class="add-name col-xs-5">
-            <input style="margin-top:25px" type="text" class="form-control" placeholder="Add a person" name="addPerson" formControlName="addPerson" />
+            <input 
+              style="margin-top:25px" 
+              type="text" 
+              class="form-control" 
+              placeholder="Add a person" 
+              name="addPerson" 
+              formControlName="addPerson" />
           </div>
           <div class="add-traits col-xs-7">
             <label class="form-check-label">
-              <input type="checkbox" formControlName="superPower" class="form-check-input">
+              <input 
+                type="checkbox" 
+                formControlName="superPower" 
+                class="form-check-input">
                 Super Power
             </label>
             <label class="form-check-label">
-              <input type="checkbox" formControlName="rich" class="form-check-input">
+              <input 
+                type="checkbox" 
+                formControlName="rich" 
+                class="form-check-input">
                 Rich
             </label>
             <label class="form-check-label">
-              <input type="checkbox" formControlName="genius" class="form-check-input">
+              <input 
+                type="checkbox" 
+                formControlName="genius" 
+                class="form-check-input">
                 Genius
             </label>
-            <button type="submit" class="btn btn-primary" [disabled]="!personForm.valid">Submit</button>
+            <button 
+              type="submit" 
+              class="btn btn-primary" 
+              [disabled]="!personForm.valid">Submit</button>
           </div>
         </div>
       </form>
@@ -29,38 +47,87 @@
 
       <div class="persons-container">
 
-        <table class="table">
+        <table class="table table-striped">
           <thead>
             <tr>
-              <th>Name</th>
-              <th *ngFor="let talent of talents">
-                {{talent[1]}}
+              <th (click)="arrange('name')">
+                <span 
+                  class="glyphicon glyphicon-triangle-right arrow"
+                  [class.glyphicon-triangle-right]="arrangeValues.name === null"
+                  [class.glyphicon-triangle-down]="arrangeValues.name === true"
+                  [class.glyphicon-triangle-up]="arrangeValues.name === false"
+                  ></span>Name
+              </th>
+              <th 
+                *ngFor="let talent of talents" 
+                (click)="arrange(talent[0])">
+                  <span class="glyphicon glyphicon-triangle-right arrow"></span>
+                  {{talent[1]}}
               </th>
               <th>Delete</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let person of filterPeople">
+            <tr *ngFor="let person of filterPeople;">
               <td>{{person.name}}</td>
 
-              <td *ngFor="let talent of talents"><input type="checkbox" (change)="onChange($event,person,talent[0])" [checked]="person[talent[0]]" /></td>
+              <td *ngFor="let talent of talents">
+                <input 
+                  type="checkbox" 
+                  (change)="onChange($event,person,talent[0])" 
+                  [checked]="person[talent[0]]" />
+                </td>
 
-              <td><input type="button" (click)="removePerson(person)" class="btn btn-secondary" value="x" /></td>
+              <td class="delete">
+                <button 
+                  type="button" 
+                  (click)="person.delete = true" 
+                  class="btn btn-secondary btn-sm btn-danger" 
+                  value="x"
+                  [class.hidden]="person.delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                </button>
+                <label [class.hidden]="!person.delete">
+                  Are you sure? 
+                  <input 
+                    type="button" 
+                    value="Yes" 
+                    (click)="removePerson(person)"
+                    class="btn btn-secondary btn-sm btn-danger" />
+                  <input 
+                    type="button" 
+                    value="no" 
+                    (click)="person.delete = false"
+                    class="btn btn-secondary btn-sm btn-danger" />
+                  </label>
+              </td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5">
+                <div class="filters">
+                  <span *ngFor="let talent of talents">
+                    <a 
+                      href="#{{talent[0]}}" 
+                      [class.active]="filterValue == talent[0]"
+                      [class.disabled]="talentCount[talent[0]] <= 0" 
+                      (click)="filterArray(talent[0])">{{talent[1]}}</a><span>|</span>
+                  </span>
+                  <a 
+                    href="#" 
+                    (click)="filterArray()" 
+                    [class.active]="!filterValue">All</a>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
         </table>
-
-        <div class="filters">
-          <span *ngFor="let talent of talents">
-            <a href="#{{talent[0]}}" [class.active]="filterValue == talent[0]" (click)="filterArray(talent[0]);">{{talent[1]}}</a><span>|</span>
-          </span>
-          <a href="#" (click)="filterArray();" [class.active]="!filterValue">All</a>
-        </div>
       </div>
     </div>
 
-    <div class="col-xs-4 side-container">
-      <h4>Toal Persons: {{people.length}}</h4>
+    <div class="col-xs-3 side-container">
+      <h4>Total People: {{people.length}}</h4>
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let talent of talents">
           {{talent[1]}}
