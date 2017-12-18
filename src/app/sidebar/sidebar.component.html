@@ -2,8 +2,11 @@
     <h3>Total People: {{people.length}}</h3>
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let talent of talents">
-        {{talent[1]}}
+        <a 
+          href="#{{talent[0]}}" 
+          (click)="filterArray(talent[0])">{{talent[1]}}
         <span class="badge" [class.active]="talentCount[talent[0]] > 0">{{talentCount[talent[0]]}}</span>
+        </a>
       </li>
     </ul>
   </div>

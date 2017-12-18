@@ -12,6 +12,7 @@ export class SidebarComponent implements OnInit {
   @Input() people: Array<Object>;
   @Input() talents: Array<Object>;
   @Input() talentCount: Array<Object>;
+  @Input() filterArray;
 
   constructor() { }
 

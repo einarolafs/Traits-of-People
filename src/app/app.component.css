@@ -157,3 +157,11 @@ table {
 .side-container {
     position: fixed;
 }
+
+.side-container .list-group {
+  font-size:16px;
+}
+
+.side-container .list-group .list-group-item .badge.active {
+  background-color:#2e6da4;
+}

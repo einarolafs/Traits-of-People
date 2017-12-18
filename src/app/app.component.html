@@ -41,6 +41,9 @@
               [disabled]="!personForm.valid">Submit</button>
           </div>
         </div>
+        <div class="alert alert-success" [hidden]="!alert.show" role="alert">
+          New person has been added to the list
+        </div>
       </form>
 
 
@@ -49,7 +52,7 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th (click)="arrange('name')">
+              <th (click)="arrange('_name')">
                 <span 
                   class="glyphicon arrow"
                   [ngClass]="{
@@ -60,16 +63,16 @@
                   ></span>Name
               </th>
               <th 
-                *ngFor="let talent of talents" 
-                (click)="arrange(talent[0])">
+                *ngFor="let trait of traits.list" 
+                (click)="arrange(trait.id)">
                   <span 
                     class="glyphicon arrow"
                     [ngClass]="{
-                      'glyphicon-triangle-right':arrangeValues[talent[0]] === null,
-                      'glyphicon-triangle-bottom': arrangeValues[talent[0]] === true,
-                      'glyphicon-triangle-top': arrangeValues[talent[0]] === false
+                      'glyphicon-triangle-right':arrangeValues[trait.id] === null,
+                      'glyphicon-triangle-bottom': arrangeValues[trait.id] === true,
+                      'glyphicon-triangle-top': arrangeValues[trait.id] === false
                     }"></span>
-                  {{talent[1]}}
+                  {{trait.value}}
               </th>
               <th>Delete</th>
             </tr>
@@ -78,11 +81,11 @@
             <tr *ngFor="let person of filterPeople;">
               <td>{{person.name}}</td>
 
-              <td *ngFor="let talent of talents">
+              <td *ngFor="let trait of traits.list">
                 <input 
                   type="checkbox" 
-                  (change)="onChange($event,person,talent[0])" 
-                  [checked]="person[talent[0]]" />
+                  (change)="onChange($event,person,trait.id)" 
+                  [checked]="person[trait.id]" />
                 </td>
 
               <td class="delete">
@@ -114,12 +117,12 @@
             <tr>
               <td colspan="5">
                 <div class="filters">
-                  <span *ngFor="let talent of talents">
+                  <span *ngFor="let trait of traits.list">
                     <a 
-                      href="#{{talent[0]}}" 
-                      [class.active]="filterValue == talent[0]"
-                      [class.disabled]="talentCount[talent[0]] <= 0" 
-                      (click)="filterArray(talent[0])">{{talent[1]}}</a><span>|</span>
+                      href="#{{trait.id}}" 
+                      [class.active]="filterValue == trait.id"
+                      [class.disabled]="trait.count <= 0" 
+                      (click)="filterArray(trait.id)">{{trait.value}}</a><span>|</span>
                   </span>
                   <a 
                     href="#" 
@@ -133,12 +136,28 @@
       </div>
     </div>
 
-    <app-sidebar 
-      [talentCount]="talentCount" 
-      [talents]="talents"
+  <!--   <app-sidebar 
+      [traitCount]="traitCount" 
+      [traits.list]="traits.list"
       [people]="people"
+      [filterArray]="filterArray"
       class="col-xs-3 side-container">
-    </app-sidebar>
+    </app-sidebar> -->
+
+    <div class="container" style="position:fixed; z-index:-1">
+      <div class="col-xs-3 col-xs-offset-9">
+        <h3>Total People: {{people.length}}</h3>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let trait of traits.list">
+            <a 
+              href="#{{trait.id}}" 
+              (click)="filterArray(trait.id)">{{trait.value}}
+            <span class="badge" [class.active]="trait.count > 0">{{[trait.count]}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
 
   </div>
 </div>
