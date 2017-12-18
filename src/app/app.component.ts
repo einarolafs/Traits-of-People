@@ -1,7 +1,7 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common'
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 interface Person {
   name: string, 
@@ -42,7 +42,7 @@ function localStorage(key: string, value?: string): Array<Person> {
   console.log('save or get')
 
   if(value){
-    return storage.setItem(key, value)
+    storage.setItem(key, value)
   } else {
     return JSON.parse(storage.getItem(key)) || [];
   }
@@ -60,6 +60,7 @@ function getDocument(){
   host: {
     '(document:click)': 'onOutsideClick($event)',
   },
+  providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
 })
 
 export class AppComponent {
@@ -93,7 +94,7 @@ export class AppComponent {
 
   document = getDocument();
 
-  constructor(private fb: FormBuilder){
+  constructor(private fb: FormBuilder, location:Location){
     this.personForm = this.fb.group({
       'addPerson': ['', Validators.required],
       'superPower': [false],
@@ -162,23 +163,21 @@ export class AppComponent {
   }
 
   filterArray(value = null) {
-    if(!value){
-      this.filterPeople = [...this.people];
-    } else {
-      this.filterPeople = this.people.filter(person => person[value] === true);
-    }
+    if(!value) this.filterPeople = [...this.people];
+    else this.filterPeople = this.people.filter(person => person[value] === true);
     this.filterValue = value;
   }
 
 
   arrange(value){
-    this.arrangeValues[value] = 
-      value == 'name' &&  this.arrangeValues[value] === null
-      ? true : this.arrangeValues[value];
+    let values = this.arrangeValues;
+    values[value] = 
+      value == 'name' &&  values[value] === null
+      ? true : values[value];
       
-    let order =  this.arrangeValues[value] ? 'asc' : 'desc';
+    let order =  values[value] ? 'asc' : 'desc';
     this.filterPeople = _.orderBy(this.filterPeople, [value], [order]);
-    this.arrangeValues[value] = !this.arrangeValues[value];
+    this.arrangeValues[value] = !values[value];
     
     
   }

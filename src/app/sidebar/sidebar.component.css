@@ -1,0 +1,7 @@
+.list-group {
+    font-size:16px;
+}
+
+.list-group .list-group-item .badge.active {
+    background-color:#2e6da4;
+}

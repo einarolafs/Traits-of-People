@@ -28,12 +28,8 @@
     text-align: center;
 }
 
-.main-container table tr th:first-child, .main-container table tr td:first-child {
-    /* min-width:180px; */
-}
-
-.main-container table tr th:last-child, .main-container table tr td:last-child {
-  /*   min-width:230px; */
+.main-container table tr th:not(.delete){
+    cursor:pointer;
 }
 
 .main-container table tr th, .main-container table tr td{
@@ -64,6 +60,4 @@
 
 .side-container {
     position: fixed;
-    right:0;
-    top:0;
 }
