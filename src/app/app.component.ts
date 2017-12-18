@@ -172,11 +172,13 @@ export class AppComponent {
 
 
   arrange(value){
-    let order =  this.arrangeValues[value] ? 'desc' : 'asc';
-    console.log(this.arrangeValues[value]);
+    this.arrangeValues[value] = 
+      value == 'name' &&  this.arrangeValues[value] === null
+      ? true : this.arrangeValues[value];
+      
+    let order =  this.arrangeValues[value] ? 'asc' : 'desc';
     this.filterPeople = _.orderBy(this.filterPeople, [value], [order]);
     this.arrangeValues[value] = !this.arrangeValues[value];
-    console.log(this.arrangeValues[value]);
     
     
   }

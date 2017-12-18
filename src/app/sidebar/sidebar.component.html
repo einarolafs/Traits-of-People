@@ -1,0 +1,9 @@
+<div>
+    <h4>Total People: {{people.length}}</h4>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let talent of talents">
+        {{talent[1]}}
+        <span class="badge badge-primary badge-pill">{{talentCount[talent[0]]}}</span>
+      </li>
+    </ul>
+  </div>
