@@ -51,7 +51,7 @@
             <tr>
               <th (click)="arrange('name')">
                 <span 
-                  class="glyphicon glyphicon-triangle-right arrow"
+                  class="glyphicon arrow"
                   [ngClass]="{
                     'glyphicon-triangle-right':arrangeValues.name === null,
                     'glyphicon-triangle-bottom': arrangeValues.name === true,
@@ -62,7 +62,13 @@
               <th 
                 *ngFor="let talent of talents" 
                 (click)="arrange(talent[0])">
-                  <span class="glyphicon glyphicon-triangle-right arrow"></span>
+                  <span 
+                    class="glyphicon arrow"
+                    [ngClass]="{
+                      'glyphicon-triangle-right':arrangeValues[talent[0]] === null,
+                      'glyphicon-triangle-bottom': arrangeValues[talent[0]] === true,
+                      'glyphicon-triangle-top': arrangeValues[talent[0]] === false
+                    }"></span>
                   {{talent[1]}}
               </th>
               <th>Delete</th>

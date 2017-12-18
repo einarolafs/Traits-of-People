@@ -1,6 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common'
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 interface Person {
@@ -11,46 +9,18 @@ interface Person {
   delete:boolean,
 }
 
-function compare(prop) {
-	return function (a, b) {
-      // Use toUpperCase() to ignore character casing
-      const genreA = a[prop].toUpperCase();
-      const genreB = b[prop].toUpperCase();
-
-      let comparison = 0;
-      if (genreA > genreB) {
-        comparison = 1;
-      } else if (genreA < genreB) {
-        comparison = -1;
-      }
-      return comparison;
-    }
-}
-
-function findClassName(className, items){
+function findClassName(className, items): boolean {
   let found = false;
   items.forEach(function(item){
     if(item.className == className) { found = true; } 
     })
-
   return found;
 }
 
 function localStorage(key: string, value?: string): Array<Person> {
   let storage = window.localStorage;
-
-  console.log('save or get')
-
-  if(value){
-    storage.setItem(key, value)
-  } else {
-    return JSON.parse(storage.getItem(key)) || [];
-  }
-
-}
-
-function getDocument(){
-  return document;
+  if(value) storage.setItem(key, value)
+  else return JSON.parse(storage.getItem(key)) || [];
 }
 
 @Component({
@@ -59,14 +29,13 @@ function getDocument(){
   styleUrls: ['./app.component.css'],
   host: {
     '(document:click)': 'onOutsideClick($event)',
-  },
-  providers: [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
+  }
 })
 
 export class AppComponent {
   personForm: any;
 
-  people: Array<Person> = localStorage('people_list');
+  people: Array<Person | Object> = localStorage('people_list');
 
   talents: Array<[string, string]> = [
     ['superPower', 'Super Power'], 
@@ -82,7 +51,7 @@ export class AppComponent {
     'rich': 0,
     'genius':0,
   };
-  filterPeople: Array<Object> = [];
+  filterPeople: Array<Person | Object> = [];
   filterValue: string = null;
 
   arrangeValues: Object = {
@@ -92,9 +61,7 @@ export class AppComponent {
     'genius':null,
   }
 
-  document = getDocument();
-
-  constructor(private fb: FormBuilder, location:Location){
+  constructor(private fb: FormBuilder){
     this.personForm = this.fb.group({
       'addPerson': ['', Validators.required],
       'superPower': [false],
@@ -176,7 +143,8 @@ export class AppComponent {
       ? true : values[value];
       
     let order =  values[value] ? 'asc' : 'desc';
-    this.filterPeople = _.orderBy(this.filterPeople, [value], [order]);
+    this.people = _.orderBy(this.people, [value], [order]);
+    this.filterArray(this.filterValue);
     this.arrangeValues[value] = !values[value];
     
     
