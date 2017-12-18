@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { setTimeout } from 'timers';
 interface Person {
-  _name:string,
+  name_upper:string,
   name: string, 
   superPower: boolean, 
   rich: boolean, 
@@ -76,7 +76,7 @@ export class AppComponent {
   filterValue: string = null;
 
   arrangeValues: Object = {
-    '_name': null,
+    'name_upper': null,
     'superPower': null,
     'rich': null,
     'genius':null,
@@ -125,7 +125,7 @@ export class AppComponent {
     
     if (this.personForm.valid) {
       let person: Person = {
-        _name: value.addPerson.toUpperCase,
+        name_upper: value.addPerson.toUpperCase(),
         name: value.addPerson,
         superPower: value.superPower || false,
         rich: value.rich || false,
@@ -136,8 +136,6 @@ export class AppComponent {
       this.traits.list.forEach((trait) => {
         trait.count = person[trait.id] === true ? trait.count + 1 : trait.count;
       });
-
-      console.log(this.traits);
 
       this.people.push(person);
       this.filterArray(this.filterValue);
@@ -152,7 +150,6 @@ export class AppComponent {
     let index = this.people.indexOf(person);
 
     this.traits.getId().forEach((id) => {
-      console.log(id, person[id]) 
       if(person[id]) this.traits.changeCount(id, false)
     })
 
@@ -193,12 +190,15 @@ export class AppComponent {
 
 
   arrange(value){
+    console.log('arrange', value)
     let values = this.arrangeValues;
+    console.log('values', values, values[value])
     values[value] = 
-      value == 'name' && values[value] === null
+      value == 'name_upper' && values[value] === null
       ? true : values[value];
       
     let order =  values[value] ? 'asc' : 'desc';
+    console.log(this.people);
     this.people = _.orderBy(this.people, [value], [order]);
     this.filterArray(this.filterValue);
     this.arrangeValues[value] = !values[value];    
