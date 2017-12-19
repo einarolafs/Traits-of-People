@@ -1,4 +1,4 @@
-# Challenge
+# Traits of People
 
 ## Development server
 
