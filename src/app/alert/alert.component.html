@@ -1,0 +1,21 @@
+<div class="container">
+  <div 
+    class="alert alert-success" 
+    role="alert"
+    [ngClass]="{
+      'alert-success':!alert.hidden,
+      'alert-warning':alert.hidden,
+      'active': alert.show
+    }">
+    <div [hidden]="alert.hidden">New person has been added to the list</div>
+    <div [hidden]="!alert.hidden" class="row">
+      <div class="col-xs-10">
+        New person has been added to the list, but will not be shown with the current filter on. Do you want to disable filters?
+      </div> 
+      <div class="col-xs-2">
+        <button class="btn btn-xs btn-primary" (click)="filter.apply(null); alert.show = false">Show all</button>
+        <button class="btn btn-xs btn-danger" style="margin-top:10px" (click)="alert.show = false">Not now</button>
+      </div>
+    </div>
+  </div>
+</div>

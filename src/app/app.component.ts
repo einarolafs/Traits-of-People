@@ -1,9 +1,9 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common'
+import { FormBuilder, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 interface Person {
+  id:string,
+  name_upper:string,
   name: string, 
   superPower: boolean, 
   rich: boolean, 
@@ -11,46 +11,27 @@ interface Person {
   delete:boolean,
 }
 
-function compare(prop) {
-	return function (a, b) {
-      // Use toUpperCase() to ignore character casing
-      const genreA = a[prop].toUpperCase();
-      const genreB = b[prop].toUpperCase();
-
-      let comparison = 0;
-      if (genreA > genreB) {
-        comparison = 1;
-      } else if (genreA < genreB) {
-        comparison = -1;
-      }
-      return comparison;
-    }
-}
-
-function findClassName(className, items){
+function findClassName(className, items): boolean {
   let found = false;
   items.forEach(function(item){
     if(item.className == className) { found = true; } 
     })
-
   return found;
 }
 
 function localStorage(key: string, value?: string): Array<Person> {
   let storage = window.localStorage;
-
-  console.log('save or get')
-
-  if(value){
-    return storage.setItem(key, value)
-  } else {
-    return JSON.parse(storage.getItem(key)) || [];
-  }
-
+  if(value) storage.setItem(key, value)
+  else return JSON.parse(storage.getItem(key)) || [];
 }
 
-function getDocument(){
-  return document;
+function guid():string {
+  function s4():string {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`
 }
 
 @Component({
@@ -59,52 +40,85 @@ function getDocument(){
   styleUrls: ['./app.component.css'],
   host: {
     '(document:click)': 'onOutsideClick($event)',
-  },
+  }
 })
 
 export class AppComponent {
   personForm: any;
 
-  people: Array<Person> = localStorage('people_list');
+  people: Array<Person | Object> = localStorage('people_list');
 
-  talents: Array<[string, string]> = [
-    ['superPower', 'Super Power'], 
-    ['rich', 'Rich'], 
-    ['genius', 'Genius']
-  ];
-  talentCount: {
-    superPower: number, 
-    rich: number, 
-    genius: number} = 
-  {
-    'superPower':0,
-    'rich': 0,
-    'genius':0,
-  };
-  filterPeople: Array<Object> = [];
-  filterValue: string = null;
+  traits = {
+    list:[
+      {id:'superPower', value:'Super Power', count:0},
+      {id:'rich', value:'Rich', count:0},
+      {id:'genius', value:'Genius', count:0},
+    ],
+    changeCount: (id, value) => {
+      this.traits.list.forEach((trait) => {
+        if(trait.id === id) {
+          trait.count = value ? trait.count + 1 : trait.count - 1;
+        }
+      })
+    },
+    getId: () => {
+      return _.map(this.traits.list, 'id');
+    }
+  }
+
+  filter = {
+    people: [],
+    value: null,
+    apply: (value = null) => {
+      if(!value) this.filter.people = [...this.people];
+      else this.filter.people = this.people.filter(person => person[value] === true);
+      this.filter.value = value || null;
+    }
+  }
 
   arrangeValues: Object = {
-    'name': null,
+    'name_upper': null,
     'superPower': null,
     'rich': null,
     'genius':null,
   }
 
-  document = getDocument();
+  alert = {
+    show:false,
+    hidden:false,
+    activate (){
+      this.show = true;
+      if(!this.hidden) setTimeout(() => {this.hide()}, 3000)
+    },
+    hide (){
+      this.show = false;
+    }
+  }
 
   constructor(private fb: FormBuilder){
     this.personForm = this.fb.group({
-      'addPerson': ['', Validators.required],
+      'name': ['', Validators.required],
       'superPower': [false],
       'rich':[false],
       'genius':[false]
     })
 
-    this.filterValue = window.location.hash.substring(1);
+    this.filter.value = window.location.hash.substring(1);
 
-    this.filterArray(this.filterValue);
-    this.getTalent();
+    this.people.forEach((person) => {
+      this.traits.getId().forEach((trait_id) => {
+        if(person[trait_id]){
+          this.traits.list.forEach((trait) => {
+            if(trait.id === trait_id) {
+              trait.count++
+            }
+          });
+        }
+      });
+    });
+
+    this.filter.apply(this.filter.value);
+    //this.getTraits();
 
   }
 
@@ -113,80 +127,72 @@ export class AppComponent {
     
     if (this.personForm.valid) {
       let person: Person = {
-        name: value.addPerson,
+        id:guid(),
+        name_upper: value.name.toUpperCase(),
+        name: value.name,
         superPower: value.superPower || false,
         rich: value.rich || false,
         genius: value.genius || false,
         delete: false,
       }
 
+      this.traits.list.forEach((trait) => {
+        trait.count = person[trait.id] === true ? trait.count + 1 : trait.count;
+      });
+      
+      if(person[this.filter.value]) this.alert.hidden = false;
+      else if(this.filter.value === null) this.alert.hidden = false;
+      else this.alert.hidden = true;
+
       this.people.push(person);
-      this.filterArray(this.filterValue);
+      this.filter.apply(this.filter.value);
       this.personForm.reset();
-      this.getTalent();
+      //this.getTraits();
       localStorage('people_list', JSON.stringify(this.people));
+      this.alert.activate();
     }
   }
 
   removePerson(person){
     let index = this.people.indexOf(person);
+
+    this.traits.getId().forEach((id) => {
+      if(person[id]) this.traits.changeCount(id, false)
+    })
+
     this.people.splice(index, 1);
-    this.filterArray(this.filterValue);
-    this.getTalent();
+    this.filter.apply(this.filter.value);
+
     localStorage('people_list', JSON.stringify(this.people));
   }
 
   onChange(event,person,selector) {
-    let index = this.people.indexOf(person);
+    //let index = this.people.indexOf(person);
     let value = event.target.checked;
     person[selector] = value;
-    this.getTalent();
+    this.traits.changeCount(selector, value)
     localStorage('people_list', JSON.stringify(this.people));
   }
 
-  getTalent() {
-    let count = this.talentCount = {
-      'superPower':0,
-      'rich': 0,
-      'genius':0,
-    };
-
-    this.people.forEach(function(person){
-      for(let details in person){
-        if(person[details] && details != 'name'){
-          count[details]++
-        }
-      }
-    })
-
-  }
-
-  filterArray(value = null) {
-    if(!value){
-      this.filterPeople = [...this.people];
-    } else {
-      this.filterPeople = this.people.filter(person => person[value] === true);
-    }
-    this.filterValue = value;
-  }
-
-
   arrange(value){
-    this.arrangeValues[value] = 
-      value == 'name' &&  this.arrangeValues[value] === null
-      ? true : this.arrangeValues[value];
+    let values = this.arrangeValues;
+
+    values[value] = 
+      value == 'name_upper' && values[value] === null
+      ? true : values[value];
       
-    let order =  this.arrangeValues[value] ? 'asc' : 'desc';
-    this.filterPeople = _.orderBy(this.filterPeople, [value], [order]);
-    this.arrangeValues[value] = !this.arrangeValues[value];
-    
-    
+    let order =  values[value] ? 'asc' : 'desc';
+
+    this.people = _.orderBy(this.people, [value], [order]);
+    this.filter.apply(this.filter.value);
+    this.arrangeValues[value] = !values[value];    
   }
+
 
   onOutsideClick(event){
     if(event.path){
       if(!findClassName('delete', event.path)) {
-        this.filterPeople.forEach(function(person: Person){
+        this.filter.people.forEach((person: Person) => {
           person.delete = false;
         })
       }

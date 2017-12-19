@@ -1,0 +1,17 @@
+.container {
+    min-width: 750px;
+}
+
+.list-group {
+    font-size:16px;
+}
+
+.list-group .list-group-item .badge.active {
+    background-color:#2e6da4;
+}
+
+.list-group a {
+    text-decoration: none;
+    width:100%;
+    display: block;
+}

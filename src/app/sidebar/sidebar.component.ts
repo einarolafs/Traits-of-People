@@ -9,9 +9,9 @@ import { Component, Input, OnInit } from '@angular/core';
 
 export class SidebarComponent implements OnInit {
 
-  @Input() people: Array<Object>;
-  @Input() talents: Array<Object>;
-  @Input() talentCount: Array<Object>;
+  @Input() people;
+  @Input() traits;
+  @Input() filter;
 
   constructor() { }
 

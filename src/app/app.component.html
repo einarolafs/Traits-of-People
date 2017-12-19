@@ -1,6 +1,8 @@
-<div class="container-fluid">
+
+<app-alert [filter]="filter" [alert]="alert"></app-alert>
+<div class="container">
   <div class="row">
-    <div class="col-xs-9 main-container">
+    <div class="col-xs-9 main-container" style="position:relative; z-index:20">
 
       <form [formGroup]="personForm" (submit)="savePerson()">
         <div class="form-group add-person row">
@@ -10,31 +12,19 @@
               type="text" 
               class="form-control" 
               placeholder="Add a person" 
-              name="addPerson" 
-              formControlName="addPerson" />
+              name="name" 
+              formControlName="name" />
           </div>
           <div class="add-traits col-xs-7">
-            <label class="form-check-label">
+
+            <label class="form-check-label" *ngFor="let trait of traits.list">
               <input 
                 type="checkbox" 
-                formControlName="superPower" 
+                formControlName="{{trait.id}}" 
                 class="form-check-input">
-                Super Power
+                {{trait.value}}
             </label>
-            <label class="form-check-label">
-              <input 
-                type="checkbox" 
-                formControlName="rich" 
-                class="form-check-input">
-                Rich
-            </label>
-            <label class="form-check-label">
-              <input 
-                type="checkbox" 
-                formControlName="genius" 
-                class="form-check-input">
-                Genius
-            </label>
+
             <button 
               type="submit" 
               class="btn btn-primary" 
@@ -43,40 +33,46 @@
         </div>
       </form>
 
-
       <div class="persons-container">
-
         <table class="table table-striped">
           <thead>
             <tr>
-              <th (click)="arrange('name')">
+              <th (click)="arrange('name_upper')">
                 <span 
-                  class="glyphicon glyphicon-triangle-right arrow"
+                  class="glyphicon arrow"
                   [ngClass]="{
-                    'glyphicon-triangle-right':arrangeValues.name === null,
-                    'glyphicon-triangle-bottom': arrangeValues.name === true,
-                    'glyphicon-triangle-top': arrangeValues.name === false
+                    'glyphicon-triangle-right':arrangeValues.name_upper === null,
+                    'glyphicon-triangle-bottom': arrangeValues.name_upper === true,
+                    'glyphicon-triangle-top': arrangeValues.name_upper === false
                   }"
                   ></span>Name
               </th>
               <th 
-                *ngFor="let talent of talents" 
-                (click)="arrange(talent[0])">
-                  <span class="glyphicon glyphicon-triangle-right arrow"></span>
-                  {{talent[1]}}
+                *ngFor="let trait of traits.list" 
+                (click)="arrange(trait.id)">
+                  <span 
+                    class="glyphicon arrow"
+                    [ngClass]="{
+                      'glyphicon-triangle-right':arrangeValues[trait.id] === null,
+                      'glyphicon-triangle-bottom': arrangeValues[trait.id] === true,
+                      'glyphicon-triangle-top': arrangeValues[trait.id] === false
+                    }"></span>
+                  {{trait.value}}
               </th>
               <th>Delete</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let person of filterPeople;">
+            <tr *ngFor="let person of filter.people;">
               <td>{{person.name}}</td>
 
-              <td *ngFor="let talent of talents">
-                <input 
-                  type="checkbox" 
-                  (change)="onChange($event,person,talent[0])" 
-                  [checked]="person[talent[0]]" />
+              <td *ngFor="let trait of traits.list">
+                <label>
+                  <input 
+                    type="checkbox" 
+                    (change)="onChange($event,person,trait.id)" 
+                    [checked]="person[trait.id]" />
+                </label>
                 </td>
 
               <td class="delete">
@@ -88,7 +84,7 @@
                   [class.hidden]="person.delete">
                 <span class="glyphicon glyphicon-trash"></span>
                 </button>
-                <label [class.hidden]="!person.delete">
+                <div [class.hidden]="!person.delete">
                   Are you sure? 
                   <input 
                     type="button" 
@@ -100,7 +96,7 @@
                     value="no" 
                     (click)="person.delete = false"
                     class="btn btn-secondary btn-sm btn-danger" />
-                  </label>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -108,17 +104,17 @@
             <tr>
               <td colspan="5">
                 <div class="filters">
-                  <span *ngFor="let talent of talents">
+                  <span *ngFor="let trait of traits.list">
                     <a 
-                      href="#{{talent[0]}}" 
-                      [class.active]="filterValue == talent[0]"
-                      [class.disabled]="talentCount[talent[0]] <= 0" 
-                      (click)="filterArray(talent[0])">{{talent[1]}}</a><span>|</span>
+                      href="#{{trait.id}}" 
+                      [class.active]="filter.value == trait.id"
+                      [class.disabled]="trait.count <= 0" 
+                      (click)="filter.apply(trait.id)">{{trait.value}}</a><span>|</span>
                   </span>
                   <a 
                     href="#" 
-                    (click)="filterArray()" 
-                    [class.active]="!filterValue">All</a>
+                    (click)="filter.apply()" 
+                    [class.active]="!filter.value">All</a>
                 </div>
               </td>
             </tr>
@@ -128,10 +124,9 @@
     </div>
 
     <app-sidebar 
-      [talentCount]="talentCount" 
-      [talents]="talents"
+      [traits]="traits"
       [people]="people"
-      class="col-xs-3 side-container">
+      [filter]="filter">
     </app-sidebar>
 
   </div>
