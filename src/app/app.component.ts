@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as _ from 'lodash';
-import { setTimeout } from 'timers';
 interface Person {
+  id:string,
   name_upper:string,
   name: string, 
   superPower: boolean, 
@@ -66,8 +66,6 @@ export class AppComponent {
     }
   }
 
-
-
   filter = {
     people: [],
     value: null,
@@ -129,6 +127,7 @@ export class AppComponent {
     
     if (this.personForm.valid) {
       let person: Person = {
+        id:guid(),
         name_upper: value.name.toUpperCase(),
         name: value.name,
         superPower: value.superPower || false,

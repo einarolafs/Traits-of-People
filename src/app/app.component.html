@@ -67,10 +67,12 @@
               <td>{{person.name}}</td>
 
               <td *ngFor="let trait of traits.list">
-                <input 
-                  type="checkbox" 
-                  (change)="onChange($event,person,trait.id)" 
-                  [checked]="person[trait.id]" />
+                <label>
+                  <input 
+                    type="checkbox" 
+                    (change)="onChange($event,person,trait.id)" 
+                    [checked]="person[trait.id]" />
+                </label>
                 </td>
 
               <td class="delete">
@@ -82,7 +84,7 @@
                   [class.hidden]="person.delete">
                 <span class="glyphicon glyphicon-trash"></span>
                 </button>
-                <label [class.hidden]="!person.delete">
+                <div [class.hidden]="!person.delete">
                   Are you sure? 
                   <input 
                     type="button" 
@@ -94,7 +96,7 @@
                     value="no" 
                     (click)="person.delete = false"
                     class="btn btn-secondary btn-sm btn-danger" />
-                  </label>
+                </div>
               </td>
             </tr>
           </tbody>
