@@ -22,45 +22,28 @@
               type="text" 
               class="form-control" 
               placeholder="Add a person" 
-              name="addPerson" 
-              formControlName="addPerson" />
+              name="name" 
+              formControlName="name" />
           </div>
           <div class="add-traits col-xs-7">
-            <label class="form-check-label">
+
+            <label class="form-check-label" *ngFor="let trait of traits.list">
               <input 
                 type="checkbox" 
-                formControlName="superPower" 
+                formControlName="{{trait.id}}" 
                 class="form-check-input">
-                Super Power
+                {{trait.value}}
             </label>
-            <label class="form-check-label">
-              <input 
-                type="checkbox" 
-                formControlName="rich" 
-                class="form-check-input">
-                Rich
-            </label>
-            <label class="form-check-label">
-              <input 
-                type="checkbox" 
-                formControlName="genius" 
-                class="form-check-input">
-                Genius
-            </label>
+
             <button 
               type="submit" 
               class="btn btn-primary" 
               [disabled]="!personForm.valid">Submit</button>
           </div>
         </div>
-        <div class="alert alert-success" [hidden]="!alert.show" role="alert">
-          New person has been added to the list
-        </div>
       </form>
 
-
       <div class="persons-container">
-
         <table class="table table-striped">
           <thead>
             <tr>
@@ -68,9 +51,9 @@
                 <span 
                   class="glyphicon arrow"
                   [ngClass]="{
-                    'glyphicon-triangle-right':arrangeValues.name === null,
-                    'glyphicon-triangle-bottom': arrangeValues.name === true,
-                    'glyphicon-triangle-top': arrangeValues.name === false
+                    'glyphicon-triangle-right':arrangeValues.name_upper === null,
+                    'glyphicon-triangle-bottom': arrangeValues.name_upper === true,
+                    'glyphicon-triangle-top': arrangeValues.name_upper === false
                   }"
                   ></span>Name
               </th>
@@ -90,7 +73,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let person of filterPeople;">
+            <tr *ngFor="let person of filter.people;">
               <td>{{person.name}}</td>
 
               <td *ngFor="let trait of traits.list">
@@ -132,14 +115,14 @@
                   <span *ngFor="let trait of traits.list">
                     <a 
                       href="#{{trait.id}}" 
-                      [class.active]="filterValue == trait.id"
+                      [class.active]="filter.value == trait.id"
                       [class.disabled]="trait.count <= 0" 
-                      (click)="filterArray(trait.id)">{{trait.value}}</a><span>|</span>
+                      (click)="filter.apply(trait.id)">{{trait.value}}</a><span>|</span>
                   </span>
                   <a 
                     href="#" 
-                    (click)="filterArray()" 
-                    [class.active]="!filterValue">All</a>
+                    (click)="filter.apply()" 
+                    [class.active]="!filter.value">All</a>
                 </div>
               </td>
             </tr>
@@ -152,18 +135,18 @@
       [traitCount]="traitCount" 
       [traits.list]="traits.list"
       [people]="people"
-      [filterArray]="filterArray"
+      [filter.apply]="filter.apply"
       class="col-xs-3 side-container">
     </app-sidebar> -->
 
-    <div class="container" style="position:fixed; z-index:-1">
+    <div class="container" style="position:fixed;">
       <div class="col-xs-3 col-xs-offset-9">
         <h3>Total People: {{people.length}}</h3>
         <ul class="list-group">
           <li class="list-group-item" *ngFor="let trait of traits.list">
             <a 
               href="#{{trait.id}}" 
-              (click)="filterArray(trait.id)">{{trait.value}}
+              (click)="filter.apply(trait.id)">{{trait.value}}
             <span class="badge" [class.active]="trait.count > 0">{{[trait.count]}}</span>
             </a>
           </li>

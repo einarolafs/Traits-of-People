@@ -11,12 +11,6 @@ interface Person {
   delete:boolean,
 }
 
-interface Traits {
-  superPower:boolean | number,
-  rich:boolean | number,
-  genius:boolean | number,
-}
-
 function findClassName(className, items): boolean {
   let found = false;
   items.forEach(function(item){
@@ -72,8 +66,17 @@ export class AppComponent {
     }
   }
 
-  filterPeople: Array<Person | Object> = [];
-  filterValue: string = null;
+
+
+  filter = {
+    people: [],
+    value: null,
+    apply: (value = null) => {
+      if(!value) this.filter.people = [...this.people];
+      else this.filter.people = this.people.filter(person => person[value] === true);
+      this.filter.value = value || null;
+    }
+  }
 
   arrangeValues: Object = {
     'name_upper': null,
@@ -84,24 +87,25 @@ export class AppComponent {
 
   alert = {
     show:false,
-    hidden_item:false,
+    hidden:false,
     activate (){
       this.show = true;
-      setTimeout(() => {
-        this.show = false;
-      }, 4000)
+      if(!this.hidden) setTimeout(() => {this.hide()}, 3000)
+    },
+    hide (){
+      this.show = false;
     }
   }
 
   constructor(private fb: FormBuilder){
     this.personForm = this.fb.group({
-      'addPerson': ['', Validators.required],
+      'name': ['', Validators.required],
       'superPower': [false],
       'rich':[false],
       'genius':[false]
     })
 
-    this.filterValue = window.location.hash.substring(1);
+    this.filter.value = window.location.hash.substring(1);
 
     this.people.forEach((person) => {
       this.traits.getId().forEach((trait_id) => {
@@ -115,7 +119,7 @@ export class AppComponent {
       });
     });
 
-    this.filterArray(this.filterValue);
+    this.filter.apply(this.filter.value);
     //this.getTraits();
 
   }
@@ -125,8 +129,8 @@ export class AppComponent {
     
     if (this.personForm.valid) {
       let person: Person = {
-        name_upper: value.addPerson.toUpperCase(),
-        name: value.addPerson,
+        name_upper: value.name.toUpperCase(),
+        name: value.name,
         superPower: value.superPower || false,
         rich: value.rich || false,
         genius: value.genius || false,
@@ -136,9 +140,13 @@ export class AppComponent {
       this.traits.list.forEach((trait) => {
         trait.count = person[trait.id] === true ? trait.count + 1 : trait.count;
       });
+      
+      if(person[this.filter.value]) this.alert.hidden = false;
+      else if(this.filter.value === null) this.alert.hidden = false;
+      else this.alert.hidden = true;
 
       this.people.push(person);
-      this.filterArray(this.filterValue);
+      this.filter.apply(this.filter.value);
       this.personForm.reset();
       //this.getTraits();
       localStorage('people_list', JSON.stringify(this.people));
@@ -154,7 +162,7 @@ export class AppComponent {
     })
 
     this.people.splice(index, 1);
-    this.filterArray(this.filterValue);
+    this.filter.apply(this.filter.value);
 
     localStorage('people_list', JSON.stringify(this.people));
   }
@@ -166,48 +174,26 @@ export class AppComponent {
     this.traits.changeCount(selector, value)
     localStorage('people_list', JSON.stringify(this.people));
   }
-/* 
-  getTraits() {
-    let count = this.talentCount = {
-      'superPower':0,
-      'rich': 0,
-      'genius':0,
-    };
-    this.people.forEach(function(person){
-      for(let details in person){
-        if(person[details] && details != 'name'){
-          count[details]++
-        }
-      }
-    }) 
-  }*/
-
-  filterArray(value = null) {
-    if(!value) this.filterPeople = [...this.people];
-    else this.filterPeople = this.people.filter(person => person[value] === true);
-    this.filterValue = value;
-  }
-
 
   arrange(value){
-    console.log('arrange', value)
     let values = this.arrangeValues;
-    console.log('values', values, values[value])
+
     values[value] = 
       value == 'name_upper' && values[value] === null
       ? true : values[value];
       
     let order =  values[value] ? 'asc' : 'desc';
-    console.log(this.people);
+
     this.people = _.orderBy(this.people, [value], [order]);
-    this.filterArray(this.filterValue);
+    this.filter.apply(this.filter.value);
     this.arrangeValues[value] = !values[value];    
   }
+
 
   onOutsideClick(event){
     if(event.path){
       if(!findClassName('delete', event.path)) {
-        this.filterPeople.forEach(function(person: Person){
+        this.filter.people.forEach((person: Person) => {
           person.delete = false;
         })
       }
