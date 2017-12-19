@@ -8,7 +8,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-
 table {
   background: white;
   border-radius:3px;
@@ -93,12 +92,7 @@ input[type=checkbox] {
 }
 
 .container {
-  min-width: 970px;
-}
-
-.container-fluid .row {
-    display: flex;
-    align-items:stretch;
+  min-width: 750px;
 }
 
 .main-container .add-person {
@@ -115,6 +109,13 @@ input[type=checkbox] {
     font-size:15px;
 }
 
+@media(max-width:991px) {
+  .main-container .add-traits {
+    font-size:13px;
+    padding-left:0;
+  }
+}
+
 .main-container .add-traits input[type=checkbox]{
   transform:translateY(2px);
   margin-right: 5px;
@@ -127,8 +128,6 @@ input[type=checkbox] {
 .main-container .filters > span > span {
     margin:0 5px;
 }
-
-
 
 .main-container table * {
     text-align: center;

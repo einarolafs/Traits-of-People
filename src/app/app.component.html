@@ -123,28 +123,11 @@
       </div>
     </div>
 
-  <!--   <app-sidebar 
-      [traitCount]="traitCount" 
-      [traits.list]="traits.list"
+    <app-sidebar 
+      [traits]="traits"
       [people]="people"
-      [filter.apply]="filter.apply"
-      class="col-xs-3 side-container">
-    </app-sidebar> -->
-
-    <div class="container" style="position:fixed;">
-      <div class="col-xs-3 col-xs-offset-9">
-        <h3>Total People: {{people.length}}</h3>
-        <ul class="list-group">
-          <li class="list-group-item" *ngFor="let trait of traits.list">
-            <a 
-              href="#{{trait.id}}" 
-              (click)="filter.apply(trait.id)">{{trait.value}}
-            <span class="badge" [class.active]="trait.count > 0">{{[trait.count]}}</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+      [filter]="filter">
+    </app-sidebar>
 
   </div>
 </div>

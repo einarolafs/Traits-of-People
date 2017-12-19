@@ -1,12 +1,14 @@
-<div>
-    <h3>Total People: {{people.length}}</h3>
-    <ul class="list-group">
-      <li class="list-group-item" *ngFor="let talent of talents">
-        <a 
-          href="#{{talent[0]}}" 
-          (click)="filterArray(talent[0])">{{talent[1]}}
-        <span class="badge" [class.active]="talentCount[talent[0]] > 0">{{talentCount[talent[0]]}}</span>
-        </a>
-      </li>
-    </ul>
+<div class="container" style="position:fixed;">
+    <div class="col-xs-3 col-xs-offset-9">
+      <h3>Total People: {{people.length}}</h3>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let trait of traits.list">
+          <a 
+            href="#{{trait.id}}" 
+            (click)="filter.apply(trait.id)">{{trait.value}}
+          <span class="badge pull-right" [class.active]="trait.count > 0">{{[trait.count]}}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
