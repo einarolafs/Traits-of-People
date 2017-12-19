@@ -219,8 +219,6 @@ export class AppComponent {
 
   /* Function to handle clicks outside of an element */
   onOutsideClick(event){
-    console.log('click outside')
-    
     if(event.path){
       if(!findClassName('delete', event.path)) {
         this.filter.people.forEach((person: Person) => {
