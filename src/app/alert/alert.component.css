@@ -1,0 +1,17 @@
+.container {
+    position:relative;
+    z-index: 100;
+}
+
+.container .alert {
+    position: fixed;
+    width: 500px;
+    left: calc(50% - 250px);
+    box-shadow:2px 2px 2px 0px rgba(0,0,0,0.5);
+    transform: translateY(-100px);
+    transition: all 0.5s;
+}
+
+.container .alert.active {
+    transform:translateY(10px);
+}
