@@ -4,7 +4,7 @@
   <div class="row">
     <div class="col-xs-9 main-container" style="position:relative; z-index:20">
 
-      <form [formGroup]="personForm" (submit)="savePerson()">
+      <form [formGroup]="personForm" (submit)="savePerson($event)">
         <div class="form-group add-person row">
           <div class="add-name col-xs-5">
             <input 
@@ -28,7 +28,7 @@
             <button 
               type="submit" 
               class="btn btn-primary" 
-              [disabled]="!personForm.valid">Submit</button>
+              [disabled]="!personForm.valid">Add</button>
           </div>
         </div>
       </form>
@@ -37,25 +37,25 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th (click)="arrange('name_upper')">
+              <th (click)="order.apply('name_upper')">
                 <span 
                   class="glyphicon arrow"
                   [ngClass]="{
-                    'glyphicon-triangle-right':arrangeValues.name_upper === null,
-                    'glyphicon-triangle-bottom': arrangeValues.name_upper === true,
-                    'glyphicon-triangle-top': arrangeValues.name_upper === false
+                    'glyphicon-triangle-right':order.values.name_upper === null,
+                    'glyphicon-triangle-bottom': order.values.name_upper === true,
+                    'glyphicon-triangle-top': order.values.name_upper === false
                   }"
                   ></span>Name
               </th>
               <th 
                 *ngFor="let trait of traits.list" 
-                (click)="arrange(trait.id)">
+                (click)="order.apply(trait.id)">
                   <span 
                     class="glyphicon arrow"
                     [ngClass]="{
-                      'glyphicon-triangle-right':arrangeValues[trait.id] === null,
-                      'glyphicon-triangle-bottom': arrangeValues[trait.id] === true,
-                      'glyphicon-triangle-top': arrangeValues[trait.id] === false
+                      'glyphicon-triangle-right':order.values[trait.id] === null,
+                      'glyphicon-triangle-bottom': order.values[trait.id] === true,
+                      'glyphicon-triangle-top': order.values[trait.id] === false
                     }"></span>
                   {{trait.value}}
               </th>
